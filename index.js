@@ -1,34 +1,40 @@
 const express = require('express');
-const app=express();
+const app = express();
 
-const Users=require('./data/user');
+const Users = require('./data/user')
 
-app.set('view engine' ,'ejs');// it use to to render ejs file in views folder so it is a command and can not be change//
-
-app.use(express.urlencoded({extended:true}));
-
-
+app.set('view engine','ejs');
+app.use(express.urlencoded({extended:true}))
+ 
 app.get('/',(req,res)=>{
-    res.send('home page')
-});
+    res.send('HOME PAGE')
+})
 
-app.get('/users' ,(req,res)=>{
+app.get('/users',(req,res)=>{
     res.render('user',{Users})
-});
+})
 
 app.get('/user/new',(req,res)=>{
-    res.render('new')
-});
-
+    res.render('new');
+})
 
 app.post('/users',(req,res)=>{
-    const {name,password,email,city} = req.body;
-    let user = {name,password,email,city};
-    Users.push(user);
-    res.redirect('/users')
-});
+    const {username,email,city,password} = req.body;
 
+    let id = Users[Users.length-1].id +1;
+
+    const user = {id,username,password,city,email};
+    Users.push(user);
+    res.redirect('/users');
+})
+
+app.get('/users/:id',(req,res)=>{
+    const {id} = req.params;
+
+    let user = Users.find((user)=>user.id==id);
+    res.render('show',{user});
+})
 
 app.listen(4000,()=>{
-    console.log('server is running');
+    console.log('server run at port 4000');
 })
